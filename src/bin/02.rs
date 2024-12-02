@@ -26,7 +26,6 @@ fn list_is_safe(list: &[usize]) -> bool {
         if new_ordering == Ordering::Equal || new_ordering != ordering || e.abs_diff(prev) > 3 {
             return false;
         }
-
         prev = e;
     }
 
@@ -38,16 +37,14 @@ fn list_is_safe_with_dampener(list: &[usize]) -> bool {
         return true;
     }
 
-    for i in 0..list.len() {
-        let mut new_list = Vec::with_capacity(list.len() - 1);
-        new_list.extend_from_slice(&list[..i]);
-        new_list.extend_from_slice(&list[i + 1..]);
-        if list_is_safe(&new_list) {
-            return true;
-        }
-    }
-
-    false
+    (0..list.len()).any(|i| {
+        let new_list = list
+            .iter()
+            .enumerate()
+            .filter_map(|(j, &x)| if i != j { Some(x) } else { None })
+            .collect_vec();
+        list_is_safe(&new_list)
+    })
 }
 
 pub fn part_one(input: &str) -> Option<u32> {

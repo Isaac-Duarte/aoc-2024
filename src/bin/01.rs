@@ -34,6 +34,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 
     Some(total_distance)
 }
+
 pub fn part_two(input: &str) -> Option<u32> {
     let mut numbers = Vec::new();
     let mut counts = HashMap::new();
