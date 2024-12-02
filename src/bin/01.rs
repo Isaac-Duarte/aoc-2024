@@ -34,7 +34,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     let total_distance: u32 = vec1
         .iter()
         .zip(&vec2)
-        .map(|(a, b)| (a - b).abs() as u32)
+        .map(|(a, b)| (a - b).unsigned_abs())
         .sum();
 
     Some(total_distance)
