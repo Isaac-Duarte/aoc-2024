@@ -3,72 +3,58 @@ use std::collections::HashMap;
 advent_of_code::solution!(1);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let mut vec1 = Vec::new();
-    let mut vec2 = Vec::new();
+    let mut list1 = Vec::new();
+    let mut list2 = Vec::new();
 
-    for line in input.lines() {
-        let line = line.trim();
-        if line.is_empty() {
-            continue;
+    for line in input.lines().map(str::trim).filter(|line| !line.is_empty()) {
+        let mut values = line
+            .split_whitespace()
+            .filter_map(|s| s.parse::<i32>().ok());
+
+        if let (Some(val1), Some(val2)) = (values.next(), values.next()) {
+            list1.push(val1);
+            list2.push(val2);
+        } else {
+            return None;
         }
-
-        let mut iter = line.split_whitespace();
-
-        let val1_str = iter.next()?;
-        let val2_str = iter.next()?;
-
-        let val1 = val1_str.parse::<i32>().ok()?;
-        let val2 = val2_str.parse::<i32>().ok()?;
-
-        vec1.push(val1);
-        vec2.push(val2);
     }
 
-    if vec1.is_empty() || vec1.len() != vec2.len() {
+    if list1.is_empty() || list1.len() != list2.len() {
         return None;
     }
 
-    vec1.sort();
-    vec2.sort();
+    list1.sort_unstable();
+    list2.sort_unstable();
 
-    let total_distance: u32 = vec1
+    let total_distance: u32 = list1
         .iter()
-        .zip(&vec2)
-        .map(|(a, b)| (a - b).unsigned_abs())
+        .zip(&list2)
+        .map(|(&a, &b)| (a - b).unsigned_abs())
         .sum();
 
     Some(total_distance)
 }
-
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut vec1 = Vec::new();
+    let mut numbers = Vec::new();
     let mut counts = HashMap::new();
 
-    for line in input.lines() {
-        let line = line.trim();
-        if line.is_empty() {
-            continue;
-        }
+    for line in input.lines().map(str::trim).filter(|line| !line.is_empty()) {
+        let mut values = line
+            .split_whitespace()
+            .filter_map(|s| s.parse::<u32>().ok());
 
-        let mut iter = line.split_whitespace();
-
-        let val1_str = iter.next()?;
-        let val2_str = iter.next()?;
-
-        let val1 = val1_str.parse::<u32>().ok()?;
-        let val2 = val2_str.parse::<u32>().ok()?;
-
-        vec1.push(val1);
-        *counts.entry(val2).or_insert(0) += 1;
-    }
-
-    let mut total_similarity_score = 0;
-
-    for item in vec1 {
-        if let Some(&count) = counts.get(&item) {
-            total_similarity_score += count * item;
+        if let (Some(val1), Some(val2)) = (values.next(), values.next()) {
+            numbers.push(val1);
+            *counts.entry(val2).or_insert(0) += 1;
+        } else {
+            return None;
         }
     }
+
+    let total_similarity_score: u32 = numbers
+        .iter()
+        .filter_map(|&num| counts.get(&num).map(|&count| count * num))
+        .sum();
 
     Some(total_similarity_score)
 }
